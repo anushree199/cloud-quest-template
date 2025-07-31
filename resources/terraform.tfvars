@@ -1,0 +1,23 @@
+name = "cloud-quest"
+vpc_cidr = "10.0.0.0/16"
+public_subnet_cidr = "10.0.1.0/24"
+availability_zone = "us-east-1a"
+app_port = "3000"
+ecr_name          = "my-ecr"
+ecs_cluster_name  = "my-ecs-cluster"
+subnet_ids        = ["subnet-09c700884047120e1"]
+
+region             = "us-east-1"
+cluster_name       = "my-cluster"
+task_family        = "my-task"
+cpu                = "256"
+memory             = "512"
+image              = "nginx:latest"
+container_port     = 80
+log_group_name     = "/ecs/my-service"
+service_name       = "my-service"
+desired_count      = 1
+security_group_ids = ["sg-0e3e01fb9ebb9b93a"]
+//target_group_arn   = "arn:aws:elasticloadbalancing:..."
+execution_role_arn  = "arn:aws:iam::123456789012:role/ecsTaskExecutionRole"
+task_role_arn       = "arn:aws:iam::123456789012:role/ecsTaskRole"
