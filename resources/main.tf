@@ -1,9 +1,9 @@
 module "vpc" {
-  source              = "../resources/vpc"
-  name                = var.name
-  vpc_cidr            = var.vpc_cidr
-  public_subnet_cidr  = var.public_subnet_cidr
-  availability_zone   = var.availability_zone
+  source               = "../resources/vpc"
+  name                 = var.name
+  vpc_cidr             = var.vpc_cidr
+  public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+  availability_zones   = ["us-east-1a", "us-east-1b"]
 }
 
 module "sg" {
@@ -27,7 +27,7 @@ module "alb" {
   source       = "../resources/alb"
   name         = var.name
   vpc_id       = module.vpc.vpc_id
-  subnet_ids   = [module.vpc.public_subnet_id] # Or your own list
+  subnet_ids   = module.vpc.public_subnet_ids# Or your own list
   app_port     = var.container_port
 }
 
@@ -45,7 +45,8 @@ module "ecs" {
   region              = var.region
   service_name        = var.service_name
   desired_count       = var.desired_count
-  subnet_ids          = var.subnet_ids
-  target_group_arn   = module.alb.target_group_arn
-  security_group_ids = [module.sg.sg_id, module.alb.alb_sg_id]
+  subnet_ids          = module.vpc.public_subnet_ids
+  target_group_arn    = module.alb.target_group_arn
+  security_group_ids  = [module.sg.sg_id,module.alb.alb_sg_id]
+  secret_word         = var.secret_word
 }
