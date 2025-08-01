@@ -17,3 +17,8 @@ variable "security_group_ids" {
   type = list(string)
 }
 variable "target_group_arn" {}
+
+variable "secret_word" {
+  description = "The SECRET_WORD to inject into the container"
+  type        = string
+}
