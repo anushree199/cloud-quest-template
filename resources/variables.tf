@@ -74,7 +74,7 @@ variable "security_group_ids" {
   type        = list(string)
 }
 
-# variable "target_group_arn" {
-#   description = "Target group ARN for the load balancer"
-#   type        = string
-# }
+variable "target_group_arn" {
+  description = "Target group ARN for the load balancer"
+  type        = string
+}
