@@ -1,26 +1,31 @@
-# Stage 1: Install dependencies
-FROM node:18-alpine AS deps
+# ---------- Stage 1: Builder ----------
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy only the package files to install deps
+# Install dependencies
 COPY package*.json ./
 RUN npm install --production
 
-# Stage 2: Copy app and run
-FROM node:18-alpine AS runner
+# Copy source files
+COPY . .
+
+# ---------- Stage 2: Runtime ----------
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy only necessary files from deps stage
-COPY --from=deps /app/node_modules ./node_modules
+# Copy built app and certs
+COPY --from=builder /app /app
+COPY cert/ /app/cert/
 
-# Copy source code
-COPY src ./src
-COPY bin ./bin
+# Create app user for better security
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
 
-# Ensure binaries are executable
-RUN chmod +x ./bin/*
-
+# Expose HTTP and HTTPS ports
 EXPOSE 3000
+EXPOSE 3000
+
+# Start app
 CMD ["node", "src/000.js"]
