@@ -39,4 +39,5 @@ app.get('/secret_word', (req, res) => {
   runScript('bin/006', JSON.stringify(req.headers), res);
 });
 
-app.listen(port, () => console.log(`Rearc quest listening on port ${port}!`));
+//app.listen(port, () => console.log(`Rearc quest listening on port ${port}!`));
+app.listen(port, '0.0.0.0', () => console.log(`Rearc quest listening on port ${port}!`));
