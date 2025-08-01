@@ -5,9 +5,9 @@ variable "availability_zone"     {}
 variable "app_port"              {}
 variable "ecr_name" {}
 variable "ecs_cluster_name" {}
-variable "subnet_ids" {
-  type = list(string)
-}
+# variable "subnet_ids" {
+#   type = list(string)
+# }
 
 variable "cluster_name" {
   description = "Name of the ECS cluster"
@@ -39,16 +39,6 @@ variable "container_port" {
   type        = number
 }
 
-variable "execution_role_arn" {
-  description = "IAM role that ECS uses to pull image and write logs"
-  type        = string
-}
-
-variable "task_role_arn" {
-  description = "IAM role that your task assumes to access AWS services"
-  type        = string
-}
-
 variable "log_group_name" {
   description = "CloudWatch log group name"
   type        = string
@@ -74,7 +64,7 @@ variable "security_group_ids" {
   type        = list(string)
 }
 
-variable "target_group_arn" {
-  description = "Target group ARN for the load balancer"
+variable "secret_word" {
+  description = "The SECRET_WORD to inject into the container"
   type        = string
 }
