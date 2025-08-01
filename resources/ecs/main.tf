@@ -44,11 +44,11 @@ resource "aws_ecs_service" "ecs_service" {
     assign_public_ip = false
   }
 
-  # load_balancer {
-  #   target_group_arn = var.target_group_arn
-  #   container_name   = var.task_family
-  #   container_port   = var.container_port
-  # }
+  load_balancer {
+    target_group_arn = var.target_group_arn
+    container_name   = var.task_family
+    container_port   = var.container_port
+  }
 
   depends_on = [aws_ecs_task_definition.ecs_task]
 }
