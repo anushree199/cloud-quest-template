@@ -13,12 +13,21 @@ resource "aws_ecs_task_definition" "ecs_task" {
 
   container_definitions = jsonencode([
     {
-      name      = var.task_family
-      image     = var.image
-      portMappings = [{
-        containerPort = var.container_port
-        hostPort      = var.container_port
-      }]
+      name  = var.task_family
+      image = var.image
+      portMappings = [
+        {
+          containerPort = var.container_port
+          hostPort      = var.container_port
+          protocol      = "tcp"
+        }
+      ]
+      environment = [
+        {
+          name  = "SECRET_WORD"
+          value = var.secret_word
+        }
+      ]
       logConfiguration = {
         logDriver = "awslogs"
         options = {
@@ -41,7 +50,7 @@ resource "aws_ecs_service" "ecs_service" {
   network_configuration {
     subnets         = var.subnet_ids
     security_groups = var.security_group_ids
-    assign_public_ip = false
+    assign_public_ip = true
   }
 
   load_balancer {
