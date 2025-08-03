@@ -197,4 +197,67 @@ cloud-quest/
 
 ```
 
+What if we own a Domain
+
+To host this app on a custom domain like api.yourdomain.com, you need:
+
+Registered domain in Route53
+
+TLS certificate in ACM (with DNS validation)
+
+Example Terraform setup is as below
+
+# Create ACM certificate
+resource "aws_acm_certificate" "cert" {
+  domain_name       = "api.yourdomain.com"
+  validation_method = "DNS"
+
+  tags = {
+    Environment = "prod"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# Add DNS record for validation
+resource "aws_route53_record" "cert_validation" {
+  name    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_name
+  type    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_type
+  zone_id = aws_route53_zone.main.zone_id
+  records = [aws_acm_certificate.cert.domain_validation_options[0].resource_record_value]
+  ttl     = 60
+}
+
+# Validate ACM
+resource "aws_acm_certificate_validation" "cert_validation" {
+  certificate_arn         = aws_acm_certificate.cert.arn
+  validation_record_fqdns = [aws_route53_record.cert_validation.fqdn]
+}
+
+# Use validated cert in HTTPS ALB listener
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.app_alb.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = aws_acm_certificate_validation.cert_validation.certificate_arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.app_tg.arn
+  }
+}
+
+
+Once setup:
+
+https://api.yourdomain.com → Secure & public endpoint via ACM
+
+You can retire self-signed certs after domain + ACM is active.
+
+Clean Up - terraform destroy
+
+
 
