@@ -2,6 +2,34 @@
 
 This project is a cloud-native deployment of the Cloud Quest application, containerized with Docker and deployed to **AWS ECS (Fargate)** using **Terraform**. The app is accessible over both HTTP and HTTPS, using **self-signed TLS certificates** mounted into the container at runtime.
 
+## IMPORTANT
+
+I have kept  assign_public_ip = true in below code because for easier deployment, if we do it false we will have to configure a nat gateway for it and make it work, I can do any of the configuration in live if given a chance. Due to time constraint I have assigned it to true. Please pardon me. I have not followed much best practice. The secrets should not be exposed so have removed that from provider.tf.
+
+resource "aws_ecs_service" "ecs_service" {
+  name            = var.service_name
+  cluster         = aws_ecs_cluster.ecs.id
+  task_definition = aws_ecs_task_definition.ecs_task.arn
+  desired_count   = var.desired_count
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    subnets         = var.subnet_ids
+    security_groups = var.security_group_ids
+    assign_public_ip = true
+  }
+
+  load_balancer {
+    target_group_arn = var.target_group_arn
+    container_name   = var.task_family
+    container_port   = var.container_port
+  }
+
+  depends_on = [aws_ecs_task_definition.ecs_task]
+}
+
+
+
 ## Overview
 
 The objective of this project was to complete the Rearc Cloud Quest challenge by:
