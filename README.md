@@ -104,11 +104,13 @@ docker push <your-ecr-repo-uri>
 ```
 
 ### 4. Deploy with Terraform
-
+This is the first step to do
 ```bash
-cd terraform/
+cd resources/
 terraform init
+terraform plan - if everything is ok then,
 terraform apply
+terraform destroy - do at the end when its for test
 ```
 
 Terraform provisions:
@@ -116,7 +118,7 @@ Terraform provisions:
 * VPC, subnets, security groups
 * ECS cluster, task definition, service
 * IAM roles for Fargate
-* (Optionally) ALB resources (commented out or skipped)
+* (Optionally) ALB resources (its just created as domain is needed)
 
 ---
 
