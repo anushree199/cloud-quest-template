@@ -155,3 +155,46 @@ Replace `<public-ip>` with your Fargate task’s public IP or ALB DNS name (if u
 
 ```
 
+## Folder Structure
+
+cloud-quest/
+├── bin/                         # Shell scripts used by the app
+│   ├── 001
+│   ├── 002
+│   ├── 003
+│   ├── 004
+│   ├── 005
+│   └── 006
+├── cert/                        # TLS certificate files (for internal HTTPS)
+│   ├── cert.pem
+│   └── key.pem
+├── resources/                   # Infrastructure as Code (Terraform modules)
+│   ├── .terraform/
+│   │   └── modules/
+│   ├── alb/
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   └── variables.tf
+│   ├── ecr/
+│   ├── ecs/
+│   ├── iam/
+│   ├── sg/
+│   ├── vpc/
+│   ├── .terraform.lock.hcl
+│   ├── main.tf
+│   ├── outputs.tf
+│   ├── providers.tf
+│   ├── terraform.tfstate
+│   ├── terraform.tfstate.backup
+│   ├── terraform.tfvars
+│   └── variables.tf
+├── src/                         # App source code
+│   └── 000.js                   # Express app entry point
+├── Dockerfile                   # Docker build instructions (multi-stage)
+├── README.md                    # Documentation and implementation notes
+├── package.json                 # Node.js dependencies and start script
+└── package-lock.json            # Locked dependency versions
+
+```
+
+
