@@ -288,4 +288,156 @@ You can retire self-signed certs after domain + ACM is active.
 Clean Up - terraform destroy
 
 
+Certainly, here's your clean `README.md` file **without any emojis**:
+
+---
+
+````
+# Node.js Multi-Stage Docker Build with HTTPS Support
+
+This project demonstrates how to containerize a Node.js Express application using a multi-stage Docker build, with support for both HTTP and HTTPS using self-signed TLS certificates.
+
+---
+
+## Dockerfile Breakdown
+
+The Dockerfile is structured into two stages:
+
+### Stage 1: builder
+
+```Dockerfile
+FROM node:20-alpine AS builder
+````
+
+* Lightweight base image for minimal build size
+* Installs dependencies with `npm install --production` to avoid dev packages
+* Copies app code and certs into `/app`
+
+### Stage 2: runtime
+
+```Dockerfile
+FROM node:20-alpine
+```
+
+* Another clean Alpine image to reduce image size and surface area
+* Copies only necessary files from builder stage
+* Creates a non-root user (`appuser`) to run the app securely
+* Exposes ports:
+
+  * 3000 for HTTP
+  * 3443 for HTTPS
+* Starts the app using:
+
+```dockerfile
+CMD ["node", "src/000.js"]
+```
+
+---
+
+## TLS Support
+
+Your application (`src/000.js`) uses the Node.js `https` module to load TLS certs from:
+
+```
+cert/key.pem
+cert/cert.pem
+```
+
+These are copied into the Docker image via:
+
+```dockerfile
+COPY cert/ /app/cert/
+```
+
+---
+
+## How to Build and Run the Container
+
+### Build the Docker Image
+
+```bash
+docker build -t cloud-quest-app .
+```
+
+### Run the Container Locally
+
+```bash
+docker run -p 3000:3000 -p 3443:3443 cloud-quest-app
+```
+
+The app is now accessible on:
+
+* HTTP: [http://localhost:3000](http://localhost:3000)
+* HTTPS: [https://localhost:3443](https://localhost:3443)
+
+For HTTPS, accept the browser’s self-signed certificate warning.
+
+---
+
+## HTTPS Verification
+
+Use the `/tls` endpoint to test TLS routing:
+
+```bash
+curl -k https://localhost:3443/tls
+```
+
+---
+
+## Security Best Practices
+
+* `node:20-alpine` is a slim image that reduces attack surface
+* `npm install --production` installs only required packages
+* Application runs as a non-root user (`appuser`)
+* TLS certificates are handled securely in a separate directory
+
+---
+
+## Folder Structure
+
+```
+cloud-quest/
+├── cert/
+│   ├── cert.pem
+│   └── key.pem
+├── dockerfile
+├── package.json
+├── package-lock.json
+├── src/
+│   └── 000.js
+```
+
+---
+
+## Deploy to ECS
+
+Once built and tested locally:
+
+1. Push the image to Amazon ECR
+2. Use Terraform with ECS/Fargate to deploy the image
+3. ECS will expose HTTP (port 80) via ALB; the container internally handles HTTPS on port 3443
+
+---
+
+## Clean Up
+
+```bash
+docker ps        # Find running container ID
+docker stop <id>
+docker rm <id>
+```
+
+---
+
+## Maintainer
+
+Anushree G
+DevOps Engineer
+
+```
+
+Let me know if you'd like to do it in any other way and also happy to give a demo.
+```
+
+
 
