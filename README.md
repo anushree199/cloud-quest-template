@@ -4,7 +4,7 @@ This project is a cloud-native deployment of the Cloud Quest application, contai
 
 ## IMPORTANT
 
-I have kept  assign_public_ip = true in below code because for easier deployment, if we do it false we will have to configure a nat gateway for it and make it work, I can do any of the configuration in live if given a chance. Due to time constraint I have assigned it to true. Please pardon me. I have not followed much best practice. The secrets should not be exposed so have removed that from provider.tf.
+I have kept  assign_public_ip = true in below code because for easier deployment, if we do it false we will have to configure a nat gateway for it and make it work, I can do any of the configuration in live if given a chance. Due to time constraint I have assigned it to true. Please pardon me. I have not followed much best practice. The secrets should not be exposed so have removed that from provider.tf. This has to be stored in backend eg S3 or in terraform cloud but for practice sake I have not gone through the best practices.
 
 resource "aws_ecs_service" "ecs_service" {
   name            = var.service_name
